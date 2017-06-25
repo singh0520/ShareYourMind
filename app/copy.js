@@ -1,10 +1,10 @@
-
 var express = require('express');
+var reload = require('reload');
 var app = express();
 var dataFile = require('./data/data.json');
-var reload = require('reload');
+var io = require('socket.io')();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3000 );
 app.set('appData', dataFile);
 app.set('view engine', 'ejs');
 app.set('views', 'app/views');
@@ -12,17 +12,22 @@ app.set('views', 'app/views');
 app.locals.siteTitle = 'Roux Meetups';
 app.locals.allSpeakers = dataFile.speakers;
 
-app.use(express.static('app/public'))
-app.use(require('./routes/index1.js'));
-app.use(require('./routes/speakers1.js'));
-app.use(require('./routes/feedback.js'));
-app.use(require('./routes/api.js'));
-app.use(require('./routes/chat.js'));
+app.use(express.static('app/public'));
+app.use(require('./routes/index1'));
+app.use(require('./routes/speakers1'));
+app.use(require('./routes/feedback'));
+app.use(require('./routes/api'));
+app.use(require('./routes/chat'));
 
+var server = app.listen(app.get('port'), function() {
+  console.log('Listening on port ' + app.get('port'));
+});
 
-
-var server = app.listen(app.get('port'), function(){
-	console.log('Listening on my port ' + app.get('port'));
+io.attach(server);
+io.on('connection', function(socket) {
+  socket.on('postMessage', function(data) {
+    io.emit('updateMessages', data);
+  });
 });
 
 reload(server, app);
