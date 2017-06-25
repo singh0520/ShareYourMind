@@ -17,6 +17,8 @@ app.use(require('./routes/index1.js'));
 app.use(require('./routes/speakers1.js'));
 app.use(require('./routes/feedback.js'));
 app.use(require('./routes/api.js'));
+app.use(require('./routes/chat.js'));
+
 
 
 var server = app.listen(app.get('port'), function(){
