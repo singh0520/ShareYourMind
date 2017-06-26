@@ -17,8 +17,9 @@ socket.on('connect', function() {
     });
 
     socket.on('updateMessages', function(data) {
+      
       showMessage(data);
-    }); 
+    });
   }
 });
 
